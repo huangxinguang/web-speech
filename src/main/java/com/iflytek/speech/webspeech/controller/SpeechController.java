@@ -16,13 +16,13 @@ import javax.servlet.http.HttpServletRequest;
  * @desc:
  */
 @RestController
-@RequestMapping("/")
+@RequestMapping("/speech/")
 public class SpeechController {
 
     @Autowired
     private SpeechService speechService;
 
-    @RequestMapping(value = "speech/iat")
+    @RequestMapping(value = "iat")
     public Result iat(HttpServletRequest request) {
         try {
             return speechService.iat(request);
