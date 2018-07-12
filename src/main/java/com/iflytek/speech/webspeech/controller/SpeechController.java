@@ -4,10 +4,8 @@ import com.iflytek.speech.webspeech.service.SpeechService;
 import com.iflytek.speech.webspeech.util.Result;
 import com.iflytek.speech.webspeech.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,21 +15,13 @@ import javax.servlet.http.HttpServletRequest;
  * @time 9:55
  * @desc:
  */
-@Controller
+@RestController
 @RequestMapping("/")
 public class SpeechController {
 
     @Autowired
     private SpeechService speechService;
 
-    @RequestMapping("index")
-    public ModelAndView index() {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index");
-        return modelAndView;
-    }
-
-    @ResponseBody
     @RequestMapping(value = "speech/iat")
     public Result iat(HttpServletRequest request) {
         try {
