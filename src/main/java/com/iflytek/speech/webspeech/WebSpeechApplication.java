@@ -2,10 +2,15 @@ package com.iflytek.speech.webspeech;
 
 import javafx.scene.Parent;
 import org.springframework.boot.Banner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
+/**
+ * @author xghuang
+ * @date 2018/7/12
+ * @time 9:55
+ * @desc:
+ */
 @SpringBootApplication
 public class WebSpeechApplication {
 
