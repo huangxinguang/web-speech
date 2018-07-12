@@ -12,10 +12,14 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -37,16 +41,32 @@ public class SpeechServiceImpl implements SpeechService {
     private String WEBIAT_URL;
 
     @Override
-    public Result iat(MultipartFile file) throws Exception {
-            Map<String, String> header = this.constructHeader("raw", "sms16k");
-            // 读取音频文件，转二进制数组，然后Base64编码
-            byte[] audioByteArray = FileUtil.inputStream2ByteArray(file.getInputStream());
-            String audioBase64 = new String(Base64.encodeBase64(audioByteArray), "UTF-8");
-            String bodyParam = "audio=" + audioBase64;
-            String result = HttpUtil.doPost(WEBIAT_URL, header, bodyParam);
-            JSONObject jsonObject = JSON.parseObject(result);
-            Object convertResult = jsonObject.getString("data");
-            return ResultUtil.getResultSuccess(convertResult);
+    public Result iat(HttpServletRequest request) throws Exception {
+        //获取file
+        // 转型为MultipartHttpRequest(重点的所在)
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        // 获得第1张图片（根据前台的name名称得到上传的文件）
+        MultipartFile file = null;
+        Iterator<String> itr = multipartRequest.getFileNames();
+        while (itr.hasNext()) {
+            String str = itr.next();
+            file = multipartRequest.getFile(str);
+            if (file == null || file.isEmpty()) {
+                return ResultUtil.getResultError("音频文件不得为空！");
+            }
+            break;
+        }
+
+        //调用后端webapi，语音听写
+        Map<String, String> header = this.constructHeader("raw", "sms16k");
+        // 读取音频文件，转二进制数组，然后Base64编码
+        byte[] audioByteArray = FileUtil.inputStream2ByteArray(file.getInputStream());
+        String audioBase64 = new String(Base64.encodeBase64(audioByteArray), "UTF-8");
+        String bodyParam = "audio=" + audioBase64;
+        String result = HttpUtil.doPost(WEBIAT_URL, header, bodyParam);
+        JSONObject jsonObject = JSON.parseObject(result);
+        Object convertResult = jsonObject.getString("data");
+        return ResultUtil.getResultSuccess(convertResult);
     }
 
     /**

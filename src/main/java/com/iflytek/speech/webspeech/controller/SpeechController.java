@@ -37,23 +37,9 @@ public class SpeechController {
     @ResponseBody
     @RequestMapping(value = "speech/iat")
     public Result iat(HttpServletRequest request) {
-        // 转型为MultipartHttpRequest(重点的所在)
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        // 获得第1张图片（根据前台的name名称得到上传的文件）
-        MultipartFile file = null;
-        Iterator<String> itr = multipartRequest.getFileNames();
-        while (itr.hasNext()) {
-            String str = itr.next();
-            file = multipartRequest.getFile(str);
-            if (file == null || file.isEmpty()) {
-                return ResultUtil.getResultError("音频文件不得为空！");
-            }
-            break;
-        }
         try {
-            return speechService.iat(file);
+            return speechService.iat(request);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResultUtil.getResultError(e.getMessage());
         }
     }

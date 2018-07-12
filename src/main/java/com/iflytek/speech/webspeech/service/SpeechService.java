@@ -3,6 +3,8 @@ package com.iflytek.speech.webspeech.service;
 import com.iflytek.speech.webspeech.util.Result;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author xghuang
  * @date 2018/7/12
@@ -11,5 +13,5 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface SpeechService {
 
-    Result iat(MultipartFile file) throws Exception;
+    Result iat(HttpServletRequest request) throws Exception;
 }
