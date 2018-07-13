@@ -3,7 +3,6 @@ package com.iflytek.speech.webspeech.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.iflytek.speech.webspeech.service.SpeechService;
-import com.iflytek.speech.webspeech.util.FileUtil;
 import com.iflytek.speech.webspeech.util.HttpUtil;
 import com.iflytek.speech.webspeech.util.Result;
 import com.iflytek.speech.webspeech.util.ResultUtil;
@@ -12,12 +11,8 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
