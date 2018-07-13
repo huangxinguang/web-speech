@@ -13,5 +13,5 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface SpeechService {
 
-    Result iat(HttpServletRequest request) throws Exception;
+    Result iat(MultipartFile audioFile) throws Exception;
 }

@@ -5,7 +5,9 @@ import com.iflytek.speech.webspeech.util.Result;
 import com.iflytek.speech.webspeech.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,9 +25,9 @@ public class SpeechController {
     private SpeechService speechService;
 
     @RequestMapping(value = "iat")
-    public Result iat(HttpServletRequest request) {
+    public Result iat(@RequestParam("audioFile") MultipartFile audioFile) {
         try {
-            return speechService.iat(request);
+            return speechService.iat(audioFile);
         } catch (Exception e) {
             return ResultUtil.getResultError(e.getMessage());
         }

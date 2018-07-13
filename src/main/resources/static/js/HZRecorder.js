@@ -1,19 +1,24 @@
+﻿
+
 (function (window) {
+	 /*var newscript = document.createElement('script');
+	    newscript.setAttribute('type','text/javascript');  
+	    //newscript.setAttribute('src','scripts/FileSave.js');
+	    document.body.appendChild(newscript);*/
+	
     //兼容
     window.URL = window.URL || window.webkitURL;
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
-
     var HZRecorder = function (stream, config) {
         config = config || {};
         config.sampleBits = config.sampleBits || 16;      //采样数位 8, 16
-        config.sampleRate = config.sampleRate || (8000);   //采样率(1/6 44100)
+        config.sampleRate = config.sampleRate || 16000;   //采样率16khz
 
-
-        var context = new AudioContext();
+        var context = new (window.webkitAudioContext || window.AudioContext)();
         var audioInput = context.createMediaStreamSource(stream);
-        var recorder = context.createScriptProcessor(4096, 1, 1);
-
+        var createScript = context.createScriptProcessor || context.createJavaScriptNode;
+        var recorder = createScript.apply(context, [4096, 1, 1]);
 
         var audioData = {
             size: 0          //录音文件长度
@@ -54,10 +59,8 @@
                 var buffer = new ArrayBuffer(44 + dataLength);
                 var data = new DataView(buffer);
 
-
                 var channelCount = 1;//单声道
                 var offset = 0;
-
 
                 var writeString = function (str) {
                     for (var i = 0; i < str.length; i++) {
@@ -65,33 +68,33 @@
                     }
                 }
 
-                // 资源交换文件标识符
+                // 资源交换文件标识符 
                 writeString('RIFF'); offset += 4;
-                // 下个地址开始到文件尾总字节数,即文件大小-8
+                // 下个地址开始到文件尾总字节数,即文件大小-8 
                 data.setUint32(offset, 36 + dataLength, true); offset += 4;
                 // WAV文件标志
                 writeString('WAVE'); offset += 4;
-                // 波形格式标志
+                // 波形格式标志 
                 writeString('fmt '); offset += 4;
-                // 过滤字节,一般为 0x10 = 16
+                // 过滤字节,一般为 0x10 = 16 
                 data.setUint32(offset, 16, true); offset += 4;
-                // 格式类别 (PCM形式采样数据)
+                // 格式类别 (PCM形式采样数据) 
                 data.setUint16(offset, 1, true); offset += 2;
-                // 通道数
+                // 通道数 
                 data.setUint16(offset, channelCount, true); offset += 2;
-                // 采样率,每秒样本数,表示每个通道的播放速度
+                // 采样率,每秒样本数,表示每个通道的播放速度 
                 data.setUint32(offset, sampleRate, true); offset += 4;
-                // 波形数据传输率 (每秒平均字节数) 单声道×每秒数据位数×每样本数据位/8
+                // 波形数据传输率 (每秒平均字节数) 单声道×每秒数据位数×每样本数据位/8 
                 data.setUint32(offset, channelCount * sampleRate * (sampleBits / 8), true); offset += 4;
-                // 快数据调整数 采样一次占用字节数 单声道×每样本的数据位数/8
+                // 快数据调整数 采样一次占用字节数 单声道×每样本的数据位数/8 
                 data.setUint16(offset, channelCount * (sampleBits / 8), true); offset += 2;
-                // 每样本数据位数
+                // 每样本数据位数 
                 data.setUint16(offset, sampleBits, true); offset += 2;
-                // 数据标识符
+                // 数据标识符 
                 writeString('data'); offset += 4;
-                // 采样数据总数,即数据总大小-44
+                // 采样数据总数,即数据总大小-44 
                 data.setUint32(offset, dataLength, true); offset += 4;
-                // 写入采样数据
+                // 写入采样数据 
                 if (sampleBits === 8) {
                     for (var i = 0; i < bytes.length; i++, offset++) {
                         var s = Math.max(-1, Math.min(1, bytes[i]));
@@ -106,11 +109,9 @@
                     }
                 }
 
-
                 return new Blob([data], { type: 'audio/wav' });
             }
         };
-
 
         //开始录音
         this.start = function () {
@@ -118,12 +119,10 @@
             recorder.connect(context.destination);
         }
 
-
         //停止
         this.stop = function () {
             recorder.disconnect();
         }
-
 
         //获取音频文件
         this.getBlob = function () {
@@ -131,17 +130,17 @@
             return audioData.encodeWAV();
         }
 
-
         //回放
         this.play = function (audio) {
+        	var blob=this.getBlob();
+        	//saveAs(blob, "F:/3.wav");
             audio.src = window.URL.createObjectURL(this.getBlob());
         }
-
 
         //上传
         this.upload = function (url, callback) {
             var fd = new FormData();
-            fd.append("audioData", this.getBlob());
+            fd.append("audioFile", this.getBlob());
             var xhr = new XMLHttpRequest();
             if (callback) {
                 xhr.upload.addEventListener("progress", function (e) {
@@ -161,13 +160,11 @@
             xhr.send(fd);
         }
 
-
         //音频采集
         recorder.onaudioprocess = function (e) {
             audioData.input(e.inputBuffer.getChannelData(0));
             //record(e.inputBuffer.getChannelData(0));
         }
-
 
     };
     //抛出异常
@@ -202,7 +199,7 @@
                                 HZRecorder.throwError('无法发现指定的硬件设备。');
                                 break;
                             default:
-                                HZRecorder.throwError('无法打开麦克风。异常信息:' + (error.code || error.name));
+                                HZRecorder.throwError('无法打开麦克风。异常信息:' + (error.name+error.code));
                                 break;
                         }
                     });
@@ -212,8 +209,8 @@
         }
     }
 
-
     window.HZRecorder = HZRecorder;
-
+    
+    
 
 })(window);
