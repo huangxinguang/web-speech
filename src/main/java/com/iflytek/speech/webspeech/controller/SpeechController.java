@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author xghuang
  * @date 2018/7/12
@@ -28,6 +26,15 @@ public class SpeechController {
     public Result iat(@RequestParam("audioFile") MultipartFile audioFile) {
         try {
             return speechService.iat(audioFile);
+        } catch (Exception e) {
+            return ResultUtil.getResultError(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "aiui")
+    public Result aiui(@RequestParam("audioFile") MultipartFile audioFile) {
+        try {
+            return speechService.aiui(audioFile);
         } catch (Exception e) {
             return ResultUtil.getResultError(e.getMessage());
         }

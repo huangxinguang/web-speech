@@ -35,7 +35,7 @@ public class WebaiuiDemo {
 	private static final String SAMPLE_RATE = "16000";
 	private static final String AUTH_ID = "2894c985bf8b1111c6728db79d3479ae";
 	private static final String AUE = "raw";
-	private static final String FILE_PATH = "C:\\Users\\DELL-5490\\Desktop\\iatdemo_java\\webiat_demo\\web-speech\\src\\main\\resources\\static\\CN_16.wav";
+	private static final String FILE_PATH = "C:\\Users\\DELL-5490\\Desktop\\iatdemo_java\\webiat_demo\\web-speech\\src\\main\\resources\\static\\audio\\test.wav";
 	// 个性化参数，需转义
 	private static final String PERS_PARAM = "{\\\"auth_id\\\":\\\"2894c985bf8b1111c6728db79d3479ae\\\"}";
 	

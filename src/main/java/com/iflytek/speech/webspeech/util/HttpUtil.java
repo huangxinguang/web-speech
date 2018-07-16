@@ -2,6 +2,7 @@ package com.iflytek.speech.webspeech.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -67,6 +68,44 @@ public class HttpUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 //			return null;
+		}
+		return result;
+	}
+
+	public static String doPost(String url, Map<String, String> header, byte[] body) {
+		String result = "";
+		BufferedReader in = null;
+		OutputStream out = null;
+		try {
+			URL realUrl = new URL(url);
+			HttpURLConnection connection = (HttpURLConnection)realUrl.openConnection();
+			for (String key : header.keySet()) {
+				connection.setRequestProperty(key, header.get(key));
+			}
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+
+			//connection.setConnectTimeout(20000);
+			//connection.setReadTimeout(20000);
+			try {
+				out = connection.getOutputStream();
+				out.write(body);
+				out.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			try {
+				in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line;
+				while ((line = in.readLine()) != null) {
+					result += line;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return result;
 	}

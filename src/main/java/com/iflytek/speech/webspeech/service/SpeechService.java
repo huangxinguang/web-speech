@@ -12,6 +12,19 @@ import javax.servlet.http.HttpServletRequest;
  * @desc:
  */
 public interface SpeechService {
-
+    /**
+     * 语音听写
+     * @param audioFile
+     * @return
+     * @throws Exception
+     */
     Result iat(MultipartFile audioFile) throws Exception;
+
+    /**
+     * 语义理解
+     * @param audioFile
+     * @return
+     * @throws Exception
+     */
+    Result aiui(MultipartFile audioFile) throws Exception;
 }

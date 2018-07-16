@@ -8,39 +8,75 @@
 <h5>讯飞语音听写测试</h5>
 <div>
     <audio controls autoplay></audio>
-    <input onclick="startRecording()" type="button" value="录音" id="startBtn" />
-    <input onclick="playRecording()" type="button" value="播放并显示" id = playBtn/>
+    <input onclick="startRecording()" type="button" value="开始录音" id="startBtn" />
+    <input onclick="playAndShowIATRecording()" type="button" value="语音听写" id = iatBtn/>
+    <input onclick="playAndShowAIUIRecording()" type="button" value="语义理解" id = aiuiBtn/>
 </div>
 <div>
-    <textarea id="showTxt" rows="10" cols="100"></textarea>
+    <textarea id="showIATTxt" rows="5" cols="100"></textarea>
+</div>
+<div>
+    <textarea id="showAIUITxt" rows="25" cols="100"></textarea>
 </div>
 <script type="text/javascript" th:src="@{/static/js/HZRecorder.js}"></script>
 <script>
     var recorder;
     var audio = document.querySelector('audio');
+    var startBtn = document.getElementById("startBtn");
 
     function startRecording() {
         HZRecorder.get(function (rec) {
             recorder = rec;
             recorder.start();
+            startBtn.disabled = true;
         });
     }
     function stopRecording() {
         recorder.stop();
     }
-    function playRecording() {
+    function playAndShowIATRecording() {
         recorder.play(audio);
-        uploadAudio();
+        uploadIATAudio();
+        startBtn.disabled = false;
+    }
+    function playAndShowAIUIRecording() {
+        recorder.play(audio);
+        uploadAIUIAudio();
+        startBtn.disabled = false;
     }
 
-    function uploadAudio() {
+    function uploadIATAudio() {
         recorder.upload("/speech/iat", function (state, e) {
             switch (state) {
                 case 'uploading':
                     break;
                 case 'ok':
                     var result = JSON.parse(e.target.responseText);
-                    var showTxtObj = document.getElementById("showTxt");
+                    var showTxtObj = document.getElementById("showIATTxt");
+                    showTxtObj.innerText="";
+                    showTxtObj.innerText = result.data;
+                    break;
+                case 'error':
+                    alert("上传失败");
+                    break;
+                case 'cancel':
+                    alert("上传被取消");
+                    break;
+                default:
+                    alert(state);
+                    break;
+            }
+        });
+    }
+
+    function uploadAIUIAudio() {
+        recorder.upload("/speech/aiui", function (state, e) {
+            switch (state) {
+                case 'uploading':
+                    break;
+                case 'ok':
+                    var result = JSON.parse(e.target.responseText);
+                    var showTxtObj = document.getElementById("showAIUITxt");
                     showTxtObj.innerText="";
                     showTxtObj.innerText = result.data;
                     break;
