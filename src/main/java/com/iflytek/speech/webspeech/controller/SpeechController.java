@@ -22,6 +22,11 @@ public class SpeechController {
     @Autowired
     private SpeechService speechService;
 
+    /**
+     * 语音听写
+     * @param audioFile
+     * @return
+     */
     @RequestMapping(value = "iat")
     public Result iat(@RequestParam("audioFile") MultipartFile audioFile) {
         try {
@@ -31,6 +36,11 @@ public class SpeechController {
         }
     }
 
+    /**
+     * 语义理解
+     * @param audioFile
+     * @return
+     */
     @RequestMapping(value = "aiui")
     public Result aiui(@RequestParam("audioFile") MultipartFile audioFile) {
         try {
