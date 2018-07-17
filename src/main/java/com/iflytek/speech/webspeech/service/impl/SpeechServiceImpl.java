@@ -6,18 +6,16 @@ import com.iflytek.speech.webspeech.component.AIUIComponent;
 import com.iflytek.speech.webspeech.component.IATComponent;
 import com.iflytek.speech.webspeech.component.TTSComponent;
 import com.iflytek.speech.webspeech.service.SpeechService;
-import com.iflytek.speech.webspeech.util.*;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.tomcat.util.codec.binary.Base64;
+import com.iflytek.speech.webspeech.util.FileUtil;
+import com.iflytek.speech.webspeech.util.JsonParser;
+import com.iflytek.speech.webspeech.util.Result;
+import com.iflytek.speech.webspeech.util.ResultUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +26,8 @@ import java.util.Map;
  */
 @Service
 public class SpeechServiceImpl implements SpeechService {
+
+    private Logger logger = LoggerFactory.getLogger(SpeechServiceImpl.class);
 
     @Autowired
     private IATComponent iatComponent;
@@ -40,6 +40,7 @@ public class SpeechServiceImpl implements SpeechService {
 
     @Override
     public Result iat(MultipartFile audioFile) throws Exception {
+        logger.info("iat params:"+audioFile);
         String result = iatComponent.getResult(audioFile);
         JSONObject jsonObject = JSON.parseObject(result);
         Object convertResult = jsonObject.getString("data");
@@ -48,6 +49,7 @@ public class SpeechServiceImpl implements SpeechService {
 
     @Override
     public Result aiui(MultipartFile audioFile) throws Exception {
+        logger.info("aiui params :"+audioFile);
         String result = aiuiComponent.getResult(audioFile);
         JSONObject jsonObject = JSON.parseObject(result);
         Object convertResult = jsonObject.getString("data");
@@ -56,6 +58,7 @@ public class SpeechServiceImpl implements SpeechService {
 
     @Override
     public Result tts(MultipartFile audioFile) throws Exception {
+        logger.info("tts params:"+audioFile);
         String result = aiuiComponent.getResult(audioFile);
         JSONObject jsonObject = JSON.parseObject(result);
         String convertResult = jsonObject.getString("data");
@@ -70,6 +73,7 @@ public class SpeechServiceImpl implements SpeechService {
      * @throws Exception
      */
     private Result convertAndSaveToAudio(String convertResult){
+        logger.info("convertAndSaveToAudio params:"+convertResult);
         try {
             //语义理解回答的结果转成语音
             String answerText = JsonParser.parseAIUIResult(convertResult);
@@ -83,6 +87,7 @@ public class SpeechServiceImpl implements SpeechService {
                 return ResultUtil.getResultError(resultMap.get("body").toString());
             }
         }catch (Exception e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         }
         return ResultUtil.getResultError();
