@@ -88,6 +88,7 @@ public class SpeechServiceImpl implements SpeechService {
                 out.write(buffer, 0, n);
             }
         }catch (Exception e) {
+            logger.error("read file error:"+e.getMessage());
             e.printStackTrace();
         }finally {
             in.close();
