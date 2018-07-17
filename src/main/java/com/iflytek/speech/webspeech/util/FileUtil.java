@@ -1,9 +1,6 @@
 package com.iflytek.speech.webspeech.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * 文件操作工具类
@@ -41,5 +38,29 @@ public class FileUtil {
 			out.write(buffer, 0, n);
 		}
 		return out.toByteArray();
+	}
+
+	/**
+	 * 保存文件
+	 * @param filePath
+	 * @param fileName
+	 * @param content
+	 */
+	public static void save(String filePath, String fileName, byte[] content) {
+		try {
+			File filedir = new File(filePath);
+			if (!filedir.exists()) {
+				filedir.mkdirs();
+			}
+			File file = new File(filedir, fileName);
+			OutputStream os = new FileOutputStream(file);
+			os.write(content, 0, content.length);
+			os.flush();
+			os.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

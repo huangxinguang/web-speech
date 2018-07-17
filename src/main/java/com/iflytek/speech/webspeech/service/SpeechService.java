@@ -4,6 +4,7 @@ import com.iflytek.speech.webspeech.util.Result;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author xghuang
@@ -27,4 +28,12 @@ public interface SpeechService {
      * @throws Exception
      */
     Result aiui(MultipartFile audioFile) throws Exception;
+
+    /**
+     * 语音合成
+     * @param audioFile
+     * @return
+     * @throws Exception
+     */
+    Result tts(HttpServletResponse response,MultipartFile audioFile) throws Exception;
 }

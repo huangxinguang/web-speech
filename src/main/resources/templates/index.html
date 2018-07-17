@@ -7,10 +7,11 @@
 <body>
 <h5>讯飞语音听写测试</h5>
 <div>
-    <audio controls autoplay></audio>
+    <audio id="audio" controls autoplay></audio>
     <input onclick="startRecording()" type="button" value="开始录音" id="startBtn" />
     <input onclick="playAndShowIATRecording()" type="button" value="语音听写" id = iatBtn/>
-    <input onclick="playAndShowAIUIRecording()" type="button" value="语义理解" id = aiuiBtn/>
+    <input onclick="playAndShowAIUIRecording()" type="button" value="语义理解文字回答" id = aiuiBtn/>
+    <input onclick="playAndShowTTSRecording()" type="button" value="语义理解语音回答" id = ttsBtn/>
 </div>
 <div>
     <textarea id="showIATTxt" rows="5" cols="100"></textarea>
@@ -18,11 +19,15 @@
 <div>
     <textarea id="showAIUITxt" rows="25" cols="100"></textarea>
 </div>
+<div>
+    <audio id="showTTSAudio" controls autoplay src="/speech/getAudio"></audio>
+</div>
 <script type="text/javascript" th:src="@{/static/js/HZRecorder.js}"></script>
 <script>
     var recorder;
-    var audio = document.querySelector('audio');
+    var audio = document.getElementById("audio");
     var startBtn = document.getElementById("startBtn");
+    var answerAudio = document.getElementById("showTTSAudio");
 
     function startRecording() {
         HZRecorder.get(function (rec) {
@@ -42,6 +47,11 @@
     function playAndShowAIUIRecording() {
         recorder.play(audio);
         uploadAIUIAudio();
+        startBtn.disabled = false;
+    }
+
+    function playAndShowTTSRecording() {
+        uploadTTSAudio();
         startBtn.disabled = false;
     }
 
@@ -79,6 +89,29 @@
                     var showTxtObj = document.getElementById("showAIUITxt");
                     showTxtObj.innerText="";
                     showTxtObj.innerText = result.data;
+                    break;
+                case 'error':
+                    alert("上传失败");
+                    break;
+                case 'cancel':
+                    alert("上传被取消");
+                    break;
+                default:
+                    alert(state);
+                    break;
+            }
+        });
+    }
+
+    function uploadTTSAudio() {
+        recorder.upload("/speech/tts", function (state, e) {
+            switch (state) {
+                case 'uploading':
+                    break;
+                case 'ok':
+                    var result = JSON.parse(e.target.responseText);
+                    var id = result.data;
+                    answerAudio.src = "/speech/getAudio?id="+id;
                     break;
                 case 'error':
                     alert("上传失败");

@@ -1,12 +1,10 @@
 package com.iflytek.speech.webspeech.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -84,9 +82,6 @@ public class HttpUtil {
 			}
 			connection.setDoOutput(true);
 			connection.setDoInput(true);
-
-			//connection.setConnectTimeout(20000);
-			//connection.setReadTimeout(20000);
 			try {
 				out = connection.getOutputStream();
 				out.write(body);
@@ -138,5 +133,59 @@ public class HttpUtil {
 			return null;
 		}
 		return result;
+	}
+
+	/**
+	 * 发送post请求,根据Content-Type分别返回不同的返回值
+	 *
+	 * @param url
+	 * @param header
+	 * @param body
+	 * @return
+	 */
+	public static Map<String, Object> doMultiPost(String url, Map<String, String> header, String body) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		PrintWriter out = null;
+		try {
+			// 设置 url
+			URL realUrl = new URL(url);
+			URLConnection connection = realUrl.openConnection();
+			// 设置 header
+			for (String key : header.keySet()) {
+				connection.setRequestProperty(key, header.get(key));
+			}
+			// 设置请求 body
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			out = new PrintWriter(connection.getOutputStream());
+			// 保存body
+			out.print(body);
+			// 发送body
+			out.flush();
+			// 获取响应header
+			String responseContentType = connection.getHeaderField("Content-Type");
+			if ("audio/mpeg".equals(responseContentType)){
+				// 获取响应body
+				byte[] bytes = FileUtil.inputStream2ByteArray(connection.getInputStream());
+				resultMap.put("Content-Type", "audio/mpeg");
+				resultMap.put("sid", connection.getHeaderField("sid"));
+				resultMap.put("body", bytes);
+				return resultMap;
+			} else {
+				// 设置请求 body
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String line;
+				String result = "";
+				while ((line = in.readLine()) != null) {
+					result += line;
+				}
+				resultMap.put("Content-Type", "text/plain");
+				resultMap.put("body", result);
+
+				return resultMap;
+			}
+		} catch (Exception e) {
+			return null;
+		}
 	}
 }

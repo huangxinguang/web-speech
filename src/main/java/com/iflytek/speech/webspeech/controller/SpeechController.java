@@ -4,10 +4,16 @@ import com.iflytek.speech.webspeech.service.SpeechService;
 import com.iflytek.speech.webspeech.util.Result;
 import com.iflytek.speech.webspeech.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * @author xghuang
@@ -48,5 +54,44 @@ public class SpeechController {
         } catch (Exception e) {
             return ResultUtil.getResultError(e.getMessage());
         }
+    }
+
+    /**
+     * 语义理解
+     * @param audioFile
+     * @return
+     */
+    @RequestMapping(value = "tts")
+    public Result tts(HttpServletResponse response, @RequestParam("audioFile") MultipartFile audioFile) {
+        try {
+            return speechService.tts(response,audioFile);
+        } catch (Exception e) {
+            return ResultUtil.getResultError(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "getAudio")
+    public void getAudio(HttpServletResponse response,@RequestParam("id")String id) {
+        try {
+            File file = new File("D:\\project\\web-speech\\src\\main\\resources\\static\\audio\\"+id+".wav");
+            FileInputStream in = new FileInputStream(file);
+            ServletOutputStream out = response.getOutputStream();
+            byte[] b = null;
+            while (in.available() > 0) {
+                if (in.available() > 10240) {
+                    b = new byte[10240];
+                } else {
+                    b = new byte[in.available()];
+                }
+                in.read(b, 0, b.length);
+                out.write(b, 0, b.length);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
