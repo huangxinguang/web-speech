@@ -39,24 +39,8 @@ public class TTSComponent {
     public Map<String,Object> getResultMap(String text) throws Exception {
         String aue = "raw";
         Map<String, String> header = getHeader("audio/L16;rate=16000", aue, "xiaoyan", "50", "50", "", "text", "50");
-        //text = "山上五棵树，架上五壶醋，林中五只鹿，箱里五条裤。伐了山上树，搬下架上的醋，射死林中的鹿，取出箱中的裤。";
         Map<String, Object> resultMap = HttpUtil.doMultiPost(WEBTTS_URL, header, "text=" + text);
         return resultMap;
-    }
-
-    public Result tts(String text) throws Exception {
-        String aue = "raw";
-        Map<String, String> header = getHeader("audio/L16;rate=16000", aue, "xiaoyan", "50", "50", "", "text", "50");
-        text = "山上五棵树，架上五壶醋，林中五只鹿，箱里五条裤。伐了山上树，搬下架上的醋，射死林中的鹿，取出箱中的裤。";
-        Map<String, Object> resultMap = HttpUtil.doMultiPost(WEBTTS_URL, header, "text=" + text);
-        // 合成成功
-        if ("audio/mpeg".equals(resultMap.get("Content-Type"))) {
-            FileUtil.save("resource\\", resultMap.get("sid") + ".wav", (byte[]) resultMap.get("body"));
-            System.out.println(resultMap.get("sid"));
-        } else { // 合成失败
-            System.out.println(resultMap.get("body").toString());
-        }
-        return null;
     }
 
     /**

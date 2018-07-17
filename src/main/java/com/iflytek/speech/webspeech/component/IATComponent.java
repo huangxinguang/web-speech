@@ -1,10 +1,6 @@
 package com.iflytek.speech.webspeech.component;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.iflytek.speech.webspeech.util.HttpUtil;
-import com.iflytek.speech.webspeech.util.Result;
-import com.iflytek.speech.webspeech.util.ResultUtil;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
