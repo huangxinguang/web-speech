@@ -35,5 +35,5 @@ public interface SpeechService {
      * @return
      * @throws Exception
      */
-    Result tts(HttpServletResponse response,MultipartFile audioFile) throws Exception;
+    Result tts(MultipartFile audioFile) throws Exception;
 }

@@ -55,29 +55,28 @@ public class SpeechServiceImpl implements SpeechService {
     }
 
     @Override
-    public Result tts(HttpServletResponse response,MultipartFile audioFile) throws Exception {
+    public Result tts(MultipartFile audioFile) throws Exception {
         String result = aiuiComponent.getResult(audioFile);
         JSONObject jsonObject = JSON.parseObject(result);
         String convertResult = jsonObject.getString("data");
-        return convertAndSaveToAudio(response,convertResult);
+        return convertAndSaveToAudio(convertResult);
     }
 
 
     /**
-     * 转化为语音并保存
+     * 转化为语音并保存（语音合成）
      * @param convertResult
      * @return
      * @throws Exception
      */
-    private Result convertAndSaveToAudio(HttpServletResponse response,String convertResult) throws Exception {
+    private Result convertAndSaveToAudio(String convertResult){
         try {
             //语义理解回答的结果转成语音
             String answerText = JsonParser.parseAIUIResult(convertResult);
             Map<String, Object> resultMap = ttsComponent.getResultMap(answerText);
             // 合成成功
             if ("audio/mpeg".equals(resultMap.get("Content-Type"))) {
-                //String savePath = SpeechServiceImpl.class.getResource("audio").getPath();
-                String savePath = "D:\\project\\web-speech\\src\\main\\resources\\static\\audio";
+                String savePath = this.getClass().getResource("/static/audio").getPath();
                 FileUtil.save(savePath, resultMap.get("sid") + ".wav", (byte[]) resultMap.get("body"));
                 return ResultUtil.getResultSuccess("成功", resultMap.get("sid"));
             } else { // 合成失败

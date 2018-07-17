@@ -14,6 +14,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URL;
 
 /**
  * @author xghuang
@@ -57,23 +58,29 @@ public class SpeechController {
     }
 
     /**
-     * 语义理解
+     * 语义理解转合成语音
      * @param audioFile
      * @return
      */
     @RequestMapping(value = "tts")
-    public Result tts(HttpServletResponse response, @RequestParam("audioFile") MultipartFile audioFile) {
+    public Result tts(@RequestParam("audioFile") MultipartFile audioFile) {
         try {
-            return speechService.tts(response,audioFile);
+            return speechService.tts(audioFile);
         } catch (Exception e) {
             return ResultUtil.getResultError(e.getMessage());
         }
     }
 
+    /**
+     * 获取音频
+     * @param response
+     * @param id
+     */
     @RequestMapping(value = "getAudio")
     public void getAudio(HttpServletResponse response,@RequestParam("id")String id) {
         try {
-            File file = new File("D:\\project\\web-speech\\src\\main\\resources\\static\\audio\\"+id+".wav");
+            String filePath = this.getClass().getResource("/static/audio").getPath();
+            File file = new File(filePath+"/"+id+".wav");
             FileInputStream in = new FileInputStream(file);
             ServletOutputStream out = response.getOutputStream();
             byte[] b = null;
