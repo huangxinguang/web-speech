@@ -13,9 +13,14 @@ import com.iflytek.speech.webspeech.util.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Map;
 
 /**
@@ -37,6 +42,9 @@ public class SpeechServiceImpl implements SpeechService {
 
     @Autowired
     private TTSComponent ttsComponent;
+
+    @Value("${file-path}")
+    private String FILE_PATH;
 
     @Override
     public Result iat(MultipartFile audioFile) throws Exception {
@@ -65,6 +73,30 @@ public class SpeechServiceImpl implements SpeechService {
         return convertAndSaveToAudio(convertResult);
     }
 
+    @Override
+    public void download(HttpServletResponse response,String id) throws Exception {
+        try {
+            File file = new File(FILE_PATH+id+".wav");
+            FileInputStream in = new FileInputStream(file);
+            ServletOutputStream out = response.getOutputStream();
+            byte[] b = null;
+            while (in.available() > 0) {
+                if (in.available() > 10240) {
+                    b = new byte[10240];
+                } else {
+                    b = new byte[in.available()];
+                }
+                in.read(b, 0, b.length);
+                out.write(b, 0, b.length);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * 转化为语音并保存（语音合成）
@@ -80,8 +112,7 @@ public class SpeechServiceImpl implements SpeechService {
             Map<String, Object> resultMap = ttsComponent.getResultMap(answerText);
             // 合成成功
             if ("audio/mpeg".equals(resultMap.get("Content-Type"))) {
-                String savePath = this.getClass().getResource("/static/audio").getPath();
-                FileUtil.save(savePath, resultMap.get("sid") + ".wav", (byte[]) resultMap.get("body"));
+                FileUtil.save(FILE_PATH, resultMap.get("sid") + ".wav", (byte[]) resultMap.get("body"));
                 return ResultUtil.getResultSuccess("成功", resultMap.get("sid"));
             } else { // 合成失败
                 return ResultUtil.getResultError(resultMap.get("body").toString());

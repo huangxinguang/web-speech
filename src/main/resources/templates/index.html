@@ -111,8 +111,8 @@
                 case 'ok':
                     var result = JSON.parse(e.target.responseText);
                     var id = result.data;
-                    //answerAudio.src = "/speech/getAudio?id="+id;
-                    answerAudio.src = "/static/audio/"+id+".wav";
+                    answerAudio.src = "/speech/getAudio?id="+id;
+                    //answerAudio.src = "/static/audio/"+id+".wav";
                     break;
                 case 'error':
                     alert("上传失败");

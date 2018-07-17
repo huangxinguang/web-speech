@@ -36,4 +36,12 @@ public interface SpeechService {
      * @throws Exception
      */
     Result tts(MultipartFile audioFile) throws Exception;
+
+    /**
+     * 下载音频文件
+     * @param response
+     * @param id
+     * @throws Exception
+     */
+    void download(HttpServletResponse response,String id) throws Exception;
 }

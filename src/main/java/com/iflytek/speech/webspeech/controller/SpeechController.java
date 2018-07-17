@@ -77,26 +77,9 @@ public class SpeechController {
     @RequestMapping(value = "getAudio")
     public void getAudio(HttpServletResponse response,@RequestParam("id")String id) {
         try {
-            String filePath = this.getClass().getResource("/static/audio").getPath();
-            File file = new File(filePath+"/"+id+".wav");
-            FileInputStream in = new FileInputStream(file);
-            ServletOutputStream out = response.getOutputStream();
-            byte[] b = null;
-            while (in.available() > 0) {
-                if (in.available() > 10240) {
-                    b = new byte[10240];
-                } else {
-                    b = new byte[in.available()];
-                }
-                in.read(b, 0, b.length);
-                out.write(b, 0, b.length);
-            }
-            in.close();
-            out.flush();
-            out.close();
-        }catch (Exception e) {
-            e.printStackTrace();
+            speechService.download(response,id);
+        } catch (Exception e) {
+            throw new RuntimeException("出错了！");
         }
-
     }
 }
