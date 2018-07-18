@@ -1,8 +1,6 @@
 package com.iflytek.speech.webspeech.component;
 
-import com.iflytek.speech.webspeech.util.FileUtil;
 import com.iflytek.speech.webspeech.util.HttpUtil;
-import com.iflytek.speech.webspeech.util.Result;
 import io.netty.util.internal.StringUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,7 +15,7 @@ import java.util.Map;
  * @author xghuang
  * @date 2018/7/17
  * @time 10:32
- * @desc:
+ * @desc:语音合成
  */
 @Component
 public class TTSComponent {
