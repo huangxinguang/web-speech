@@ -2,8 +2,10 @@ package com.iflytek.speech.webspeech;
 
 import javafx.scene.Parent;
 import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
  * @author xghuang
@@ -12,13 +14,15 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @desc:
  */
 @SpringBootApplication
-public class WebSpeechApplication {
+public class WebSpeechApplication extends SpringBootServletInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(WebSpeechApplication.class);
+    }
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder()
-                .sources(Parent.class)
-                .child(WebSpeechApplication.class)
-                .bannerMode(Banner.Mode.OFF)
-                .run(args);
+        SpringApplication.run(WebSpeechApplication.class, args);
     }
+
 }

@@ -6,10 +6,7 @@ import com.iflytek.speech.webspeech.component.AIUIComponent;
 import com.iflytek.speech.webspeech.component.IATComponent;
 import com.iflytek.speech.webspeech.component.TTSComponent;
 import com.iflytek.speech.webspeech.service.SpeechService;
-import com.iflytek.speech.webspeech.util.FileUtil;
-import com.iflytek.speech.webspeech.util.JsonParser;
-import com.iflytek.speech.webspeech.util.Result;
-import com.iflytek.speech.webspeech.util.ResultUtil;
+import com.iflytek.speech.webspeech.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author xghuang
@@ -112,8 +110,9 @@ public class SpeechServiceImpl implements SpeechService {
             Map<String, Object> resultMap = ttsComponent.getResultMap(answerText);
             // 合成成功
             if ("audio/mpeg".equals(resultMap.get("Content-Type"))) {
-                FileUtil.save(FILE_PATH, resultMap.get("sid") + ".wav", (byte[]) resultMap.get("body"));
-                return ResultUtil.getResultSuccess("成功", resultMap.get("sid"));
+                String fileId = StringUtil.genUUID();
+                FileUtil.save(FILE_PATH, fileId + ".wav", (byte[]) resultMap.get("body"));
+                return ResultUtil.getResultSuccess("成功", fileId);
             } else { // 合成失败
                 logger.error(resultMap.get("body").toString());
                 return ResultUtil.getResultError(resultMap.get("body").toString());
