@@ -24,7 +24,10 @@ public class JsonParser {
 					if(intent != null) {
 						Object answer = ((JSONObject)intent).get("answer");
 						if(answer != null) {
-							ret.append(((JSONObject)answer).get("text"));
+							String text = ((JSONObject)answer).getString("text");
+							text = text.replace("[k0]","");
+							text = text.replace("[k3]","");
+							ret.append(text);
 						}
 					}
 				}

@@ -115,6 +115,7 @@ public class SpeechServiceImpl implements SpeechService {
                 FileUtil.save(FILE_PATH, resultMap.get("sid") + ".wav", (byte[]) resultMap.get("body"));
                 return ResultUtil.getResultSuccess("成功", resultMap.get("sid"));
             } else { // 合成失败
+                logger.error(resultMap.get("body").toString());
                 return ResultUtil.getResultError(resultMap.get("body").toString());
             }
         }catch (Exception e) {
