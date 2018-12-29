@@ -6,5 +6,5 @@
 ### 语音合成
 ### 语义理解功能
 
-## 在win10 Microsoft Edge打开
+## 页面在win10 Microsoft Edge浏览器打开，google等浏览器不支持
 
